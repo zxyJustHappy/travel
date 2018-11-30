@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+    <link rel="stylesheet" href="./robot.css">
+    <script>
+        function send(event) {
+            if(event instanceof KeyboardEvent && event.key != "Enter"){
+                return
+            }
+            var val = document.getElementById('chatArea').value
+            if(val == null || val == ''){
+                return
+            }
+            var me = document.createElement('p')
+            me.style.color = 'blue'
+            me.innerHTML = '我: ' + val
+            document.getElementById('content').appendChild(me)
+            var ajax = new XMLHttpRequest()
+            ajax.open('get','http://127.0.0.1:12306/chat?text=' + val)
+            ajax.send()
+            ajax.onreadystatechange = function () {
+                if(ajax.readyState == 4 && ajax.status == 200){
+                    var temp = document.createElement('p')
+                    temp.innerHTML = '机器人: ' + JSON.parse(ajax.responseText).text
+                    document.getElementById('content').appendChild(temp)
+                    document.getElementById('chatArea').value = ''
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div id="chat">
+    <div id="head">智障机器人</div>
+    <div id="content"></div>
+    <div id="input">
+        <input type="text" id="chatArea" onkeydown="send(event)">
+        <div id="sendBtn" onclick="send(event)">发送</div>
+    </div>
+</div>
+</body>
+</html>
